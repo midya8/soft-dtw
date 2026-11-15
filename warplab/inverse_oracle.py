@@ -5,8 +5,16 @@ from .inverse import inverse_request,SCHEMA,TOL,WIDTH
 from .oracle import enumerate_paths,compare
 
 
+def _fixed_number(expected, actual, field):
+    # Policy constants and dyadic bisection coordinates have no replay error.
+    if type(actual) not in (int, float) or actual != expected:
+        raise ValueError('fixed inverse witness field mismatch: ' + field)
+
+
 def verify_inverse(report):
     if type(report)is not dict or 'request'not in report:raise ValueError('invalid inverse report')
+    _fixed_number(TOL, report.get('absolute_mean_tolerance'), 'absolute_mean_tolerance')
+    _fixed_number(WIDTH, report.get('penalty_width_tolerance'), 'penalty_width_tolerance')
     req=inverse_request(report['request']);r=req['alignment'];target=req['target'];n,m=len(r['x']),len(r['y']);g=r['gamma']
     paths=list(enumerate_paths(n,m));lengths=[len(p)for p in paths]
     costs=[float(sum((Fraction((r['x'][i]-r['y'][j])**2)for i,j in p),Fraction()))for p in paths]
@@ -40,5 +48,16 @@ def verify_inverse(report):
     candidates=endpoints+[{k:v for k,v in s.items()if k not in ('lower','upper')}for s in expected]
     best=min(candidates,key=lambda v:(abs(v['mean']-target),v['penalty']));selected=None if status=='unidentifiable'else best
     value=dict(schema=SCHEMA,request=req,absolute_mean_tolerance=TOL,penalty_width_tolerance=WIDTH,status=status,legal_lengths=legal,endpoints=endpoints,trace=expected,selected=selected,residual=None if selected is None else selected['mean']-target)
+    for index, step in enumerate(expected):
+        actual = trace[index]
+        if type(actual) is not dict:
+            raise ValueError('invalid trace step')
+        for key in ('lower', 'upper', 'penalty'):
+            _fixed_number(step[key], actual.get(key), 'trace.' + str(index) + '.' + key)
+    if selected is not None:
+        actual_selected = report.get('selected')
+        if type(actual_selected) is not dict:
+            raise ValueError('invalid selected response')
+        _fixed_number(selected['penalty'], actual_selected.get('penalty'), 'selected.penalty')
     compare(value,report)
     return True
