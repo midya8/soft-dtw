@@ -1,6 +1,6 @@
 # Soft dtw
 
-WarpLab implements established soft-DTW mathematics in dependency-free scalar Python and browser JavaScript. Stable forward/backward messages expose every cell occupancy and edge flow. Directional expectation messages give cost Hessian-vector products without an autodiff library. A separate exhaustive path oracle checks the complete report.
+This implementation implements established soft-DTW mathematics in dependency-free scalar Python and browser JavaScript. Stable forward/backward messages expose every cell occupancy and edge flow. Directional expectation messages give cost Hessian-vector products without an autodiff library. A separate exhaustive path oracle checks the complete report.
 
 This is a bounded mathematical instrument, not a trained model, performance benchmark, new alignment algorithm, or production-scale library.
 
