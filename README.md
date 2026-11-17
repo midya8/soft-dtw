@@ -1,4 +1,4 @@
-# WarpLab
+# Soft dtw
 
 WarpLab implements established soft-DTW mathematics in dependency-free scalar Python and browser JavaScript. Stable forward/backward messages expose every cell occupancy and edge flow. Directional expectation messages give cost Hessian-vector products without an autodiff library. A separate exhaustive path oracle checks the complete report.
 
@@ -8,9 +8,9 @@ This is a bounded mathematical instrument, not a trained model, performance benc
 
 | Question | Inspector | CLI / contract |
 | --- | --- | --- |
-| Which cells and edges carry alignment probability, and how does the score change? | [Alignment](https://midya8.github.io/warplab/) | `analyze` / [CONTRACT.md](CONTRACT.md) |
-| How do paths of different lengths contribute, and what does a per-cell penalty change? | [Length atlas](https://midya8.github.io/warplab/lengths.html) | `lengths` / [LENGTHS.md](LENGTHS.md) |
-| Can a penalty in [-4,4] attain a target expected visited-cell count? | [Inverse response](https://midya8.github.io/warplab/inverse.html) | `inverse` / [INVERSE.md](INVERSE.md) |
+| Which cells and edges carry alignment probability, and how does the score change? | [Alignment](https://midya8.github.io/soft-dtw/) | `analyze` / [CONTRACT.md](CONTRACT.md) |
+| How do paths of different lengths contribute, and what does a per-cell penalty change? | [Length atlas](https://midya8.github.io/soft-dtw/lengths.html) | `lengths` / [LENGTHS.md](LENGTHS.md) |
+| Can a penalty in [-4,4] attain a target expected visited-cell count? | [Inverse response](https://midya8.github.io/soft-dtw/inverse.html) | `inverse` / [INVERSE.md](INVERSE.md) |
 
 The penalty changes the objective, not alignment quality. A small penalty bracket and a small mean residual are separate outcomes; neither is an interval-arithmetic certificate or proof of a unique parameter.
 
@@ -76,13 +76,13 @@ JavaScript tests compare 168 complete Python/JavaScript reports and pass both ve
 
 ## Length atlas
 
-The [length inspector](https://midya8.github.io/warplab/lengths.html) separates the Gibbs law into every legal visited-cell count. It reports conditional occupancies and edge flows, exact per-length path counts and hard minima, conditional sequence gradients and the entropy chain rule. A per-cell penalty changes only the length mixture, not the conditional laws. The score's penalty gradient is expected length; its curvature is negative length variance divided by temperature.
+The [length inspector](https://midya8.github.io/soft-dtw/lengths.html) separates the Gibbs law into every legal visited-cell count. It reports conditional occupancies and edge flows, exact per-length path counts and hard minima, conditional sequence gradients and the entropy chain rule. A per-cell penalty changes only the length mixture, not the conditional laws. The score's penalty gradient is expected length; its curvature is negative length variance divided by temperature.
 
 `warplab lengths request.json -o atlas.json` emits `warplab-lengths-v1`; `warplab verify-lengths atlas.json` independently groups complete paths and evaluates the penalized path law. The request wraps the base input as `alignment` and adds optional `penalty` in [-4,4]. The embedded base certificate and its bounds are unchanged. [Conventions and derivations](LENGTHS.md).
 
 ## Inverse response
 
-The [inverse inspector](https://midya8.github.io/warplab/inverse.html) checks finite endpoint reachability before searching for a penalty. It retains single-length unidentifiability, numerical flattening, every bisection decision and each sampled length law. Targets are in [1,13]; a target outside the finite endpoint response range is a reported outcome, not an invalid request.
+The [inverse inspector](https://midya8.github.io/soft-dtw/inverse.html) checks finite endpoint reachability before searching for a penalty. It retains single-length unidentifiability, numerical flattening, every bisection decision and each sampled length law. Targets are in [1,13]; a target outside the finite endpoint response range is a reported outcome, not an invalid request.
 
 `warplab inverse request.json -o witness.json` emits `warplab-inverse-v1`; `warplab verify-inverse witness.json` independently evaluates complete paths at every witness penalty without calling the solver. The request has `alignment` and `target`. Absolute mean tolerance and pre-update penalty-width tolerance are both 1e-9, with at most 40 midpoint evaluations. A width stop need not satisfy mean tolerance; inspect the selected point's actual residual. [Statuses, fixed policy and reproduction](INVERSE.md).
 
